@@ -142,7 +142,7 @@
             font-size: 1.1rem;
             font-weight: 700;
             border: none;
-            background-color: var(--primary-color);
+            background-color: var(--info-color);
             color: white;
             border-radius: 12px;
             cursor: pointer;
@@ -184,14 +184,14 @@
         #feedback-screen {
             display: none;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            justify-content: center; /* Center content vertically */
-            gap: 0;
+            gap: 1.5rem;
             width: 100%;
-            text-align: center;
-            transition: background-color 0.5s ease-in-out;
-            min-height: 250px;
+            min-height: 200px;
             border-radius: 15px;
+            font-weight: 700;
+            color: white;
         }
         
         #feedback-screen.correct {
@@ -201,16 +201,12 @@
         #feedback-screen.incorrect {
             background-color: var(--error-color);
         }
-
-        .feedback-message {
-            display: none;
-        }
         
-        .feedback-details {
-            font-size: 4.5rem;
-            font-weight: 700;
-            color: white;
+        /* New styles for just showing the number */
+        #feedback-screen.incorrect .feedback-message {
+            font-size: 5rem;
         }
+
 
         /* Mobile-first adjustments */
         @media (max-width: 480px) {
@@ -220,14 +216,11 @@
             h1 {
                 font-size: 2rem;
             }
-            .problem {
+            .problem, .feedback-message {
                 font-size: 3rem;
             }
             .choice-btn {
                 font-size: 2rem;
-            }
-            .feedback-details {
-                font-size: 3.5rem;
             }
         }
     </style>
