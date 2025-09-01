@@ -7,16 +7,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tone.js for sound effects -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         :root {
-            --primary-color: #28a745; /* Green */
+            --primary-color: #2e8b57; /* Dark Green */
             --secondary-color: #6c757d;
             --light-bg: #f8f9fa;
             --dark-text: #212529;
-            --success-color: #218838;
+            --success-color: #28a745;
             --error-color: #dc3545;
-            --info-color: #17a2b8;
+            --info-color: #3cb371; /* Dark Green */
         }
 
         body {
@@ -25,7 +26,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(to right, #4CAF50, #81C784);
+            background: linear-gradient(to right, #3cb371, #2e8b57); /* Green to dark green gradient */
             color: var(--dark-text);
             margin: 0;
             padding: 20px;
@@ -56,7 +57,7 @@
         .progress-text {
             font-size: 1.25rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--info-color);
         }
 
         .problem {
@@ -141,7 +142,7 @@
             font-size: 1.1rem;
             font-weight: 700;
             border: none;
-            background-color: var(--primary-color);
+            background-color: var(--info-color);
             color: white;
             border-radius: 12px;
             cursor: pointer;
@@ -183,16 +184,16 @@
         #feedback-screen {
             display: none;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            justify-content: center; /* Center content vertically */
-            gap: 0;
+            gap: 1.5rem;
             width: 100%;
-            text-align: center;
-            transition: background-color 0.5s ease-in-out;
-            min-height: 250px;
+            min-height: 200px;
             border-radius: 15px;
+            font-weight: 700;
+            color: white;
         }
-        
+
         #feedback-screen.correct {
             background-color: var(--success-color);
         }
@@ -200,16 +201,12 @@
         #feedback-screen.incorrect {
             background-color: var(--error-color);
         }
-
-        .feedback-message {
-            display: none;
-        }
         
-        .feedback-details {
-            font-size: 4.5rem;
-            font-weight: 700;
-            color: white;
+        /* New styles for just showing the number */
+        #feedback-screen.incorrect .feedback-message {
+            font-size: 5rem;
         }
+
 
         /* Mobile-first adjustments */
         @media (max-width: 480px) {
@@ -219,14 +216,11 @@
             h1 {
                 font-size: 2rem;
             }
-            .problem {
+            .problem, .feedback-message {
                 font-size: 3rem;
             }
             .choice-btn {
                 font-size: 2rem;
-            }
-            .feedback-details {
-                font-size: 3.5rem;
             }
         }
     </style>
@@ -234,18 +228,39 @@
 <body>
 
     <div class="game-container">
+        <!-- Start Screen -->
         <div id="start-screen">
             <h1>เกมการคูณ</h1>
-            <p>มาฝึกคูณเลขกันเถอะ!</p>
             <div id="set-selector-container">
                 <label for="set-selector">เลือกชุดโจทย์:</label>
-                <select id="set-selector"></select>
+                <select id="set-selector">
+                    <option value="1">ชุดที่ 1</option>
+                    <option value="2">ชุดที่ 2</option>
+                    <option value="3">ชุดที่ 3</option>
+                    <option value="4">ชุดที่ 4</option>
+                    <option value="5">ชุดที่ 5</option>
+                    <option value="6">ชุดที่ 6</option>
+                    <option value="7">ชุดที่ 7</option>
+                </select>
             </div>
-            <button id="startBtn" class="game-btn">เริ่มเล่น</button>
+            <button id="startBtn" class="game-btn">เริ่มเล่นชุดที่เลือก</button>
         </div>
         
+        <!-- Main Game Content (Question Screen) -->
         <div id="game-content" style="display: none; flex-direction: column; align-items: center; gap: 1.5rem;">
             <div id="game-controls">
+                <div id="set-selector-container">
+                    <label for="set-selector-in-game">เลือกชุดโจทย์:</label>
+                    <select id="set-selector-in-game">
+                        <option value="1">ชุดที่ 1</option>
+                        <option value="2">ชุดที่ 2</option>
+                        <option value="3">ชุดที่ 3</option>
+                        <option value="4">ชุดที่ 4</option>
+                        <option value="5">ชุดที่ 5</option>
+                        <option value="6">ชุดที่ 6</option>
+                        <option value="7">ชุดที่ 7</option>
+                    </select>
+                </div>
                 <div class="progress-text" id="progressText"></div>
             </div>
             <div class="problem" id="problemText"></div>
@@ -260,11 +275,13 @@
             </div>
         </div>
 
+        <!-- Feedback Screen -->
         <div id="feedback-screen">
             <div class="feedback-message" id="feedbackMessage"></div>
             <div class="feedback-details" id="feedbackDetails"></div>
         </div>
 
+        <!-- End of Set Screen -->
         <div id="end-screen" style="display: none;">
             <div class="feedback-message" id="endMessage"></div>
             <div class="feedback-details" id="endDetails"></div>
@@ -286,6 +303,7 @@
         const scoreSpan = document.getElementById('score');
         const timerSpan = document.getElementById('timer');
         const setSelectorStart = document.getElementById('set-selector');
+        const setSelectorInGame = document.getElementById('set-selector-in-game');
         const startScreen = document.getElementById('start-screen');
         const gameContent = document.getElementById('game-content');
         const feedbackScreen = document.getElementById('feedback-screen');
@@ -297,19 +315,19 @@
         const restartBtn = document.getElementById('restartBtn');
 
         // Game state variables
-        const totalQuestionsPerSet = 20;
-        const totalSets = 7;
+        let totalQuestionsPerSet = 20;
+        let totalSets = 7;
         let score = 0;
         let currentSet = 1;
         let questionIndex = 0;
         let allProblems = [];
+        let currentSetProblems = [];
         
         // Timer variables
         let timeElapsed = 0;
         let timerInterval;
 
         // Tone.js sound effects
-        // Use a MetalSynth for a bell sound and add reverb for richness
         const reverb = new Tone.Reverb({
             decay: 2,
             preDelay: 0.01,
@@ -330,46 +348,40 @@
             octaves: 2
         }).connect(reverb);
         
-        // Use a simple Synth for a clear "incorrect" tone
         const incorrectSynth = new Tone.Synth({
             oscillator: { type: "square" },
             envelope: { attack: 0.005, decay: 0.1, sustain: 0.1, release: 0.1 }
         }).toDestination();
-        
+
         /**
-         * Generates all unique multiplication problems for sets 1-7.
+         * Generates all unique multiplication problems and shuffles them.
          */
-        function preGenerateProblems() {
+        function preGenerateAllProblems() {
             const possibleProblems = [];
             const problemsSet = new Set();
+            // Generate multiplication problems from 2 to 12
             for (let i = 2; i <= 12; i++) {
-                for (let j = 1; j <= 12; j++) {
-                    const problemKey = `${i}x${j}`;
+                for (let j = 2; j <= 12; j++) {
+                    const problemKey = `${i}*${j}`;
                     if (!problemsSet.has(problemKey)) {
-                        possibleProblems.push({ number1: i, number2: j, result: i * j });
+                        possibleProblems.push({ factor1: i, factor2: j, result: i * j });
                         problemsSet.add(problemKey);
                     }
                 }
             }
-            
-            // Shuffle the entire list of problems
+            // Shuffle the problems
             for (let i = possibleProblems.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [possibleProblems[i], possibleProblems[j]] = [possibleProblems[j], possibleProblems[i]];
             }
-            
-            // Split into sets
-            allProblems = [];
-            for (let i = 0; i < totalSets; i++) {
-                allProblems.push(possibleProblems.slice(i * totalQuestionsPerSet, (i + 1) * totalQuestionsPerSet));
-            }
+            allProblems = possibleProblems;
         }
 
         /**
          * Loads and displays the next question from the current set.
          */
         function loadNextQuestion() {
-            if (questionIndex >= totalQuestionsPerSet) {
+            if (questionIndex >= currentSetProblems.length) {
                 endSet();
                 return;
             }
@@ -378,19 +390,18 @@
                 btn.classList.remove('correct-answer', 'incorrect-answer');
             });
 
-            const currentProblem = allProblems[currentSet - 1][questionIndex];
-            const { number1, number2, result } = currentProblem;
+            const currentProblem = currentSetProblems[questionIndex];
+            const { factor1, factor2, result } = currentProblem;
             
-            problemText.textContent = `${number1} x ${number2}`;
+            problemText.textContent = `${factor1} × ${factor2}`;
             
             const correctAnswer = result;
 
             const choices = new Set();
             choices.add(correctAnswer);
             while (choices.size < 3) {
-                let incorrectAnswer = Math.floor(Math.random() * 145) + 1;
-                // Ensure incorrect answers are not too close to the correct one
-                if (Math.abs(incorrectAnswer - correctAnswer) > 5 && !choices.has(incorrectAnswer)) {
+                let incorrectAnswer = Math.floor(Math.random() * 121) + 1;
+                if (!choices.has(incorrectAnswer)) {
                     choices.add(incorrectAnswer);
                 }
             }
@@ -398,7 +409,8 @@
             choiceBtns.forEach((btn, index) => {
                 btn.textContent = shuffledChoices[index];
             });
-            progressText.textContent = `ชุดที่ ${currentSet} | ข้อที่ ${questionIndex + 1} / ${totalQuestionsPerSet}`;
+            progressText.textContent = `ชุดที่ ${currentSet} | ข้อที่ ${questionIndex + 1} / ${currentSetProblems.length}`;
+            questionIndex++;
         }
 
         /**
@@ -408,44 +420,46 @@
         function checkAnswer(event) {
             const selectedBtn = event.target;
             const userAnswer = parseInt(selectedBtn.textContent, 10);
-            const { result } = allProblems[currentSet - 1][questionIndex];
+            const currentProblem = currentSetProblems[questionIndex - 1]; // Get the problem that was just displayed
+            const { result } = currentProblem;
+            const now = Tone.now();
 
             gameContent.style.display = 'none';
             feedbackScreen.style.display = 'flex';
             
-            // Clear all previous classes and content
-            feedbackScreen.classList.remove('correct', 'incorrect');
             feedbackMessage.textContent = '';
             feedbackDetails.textContent = '';
-
-            const now = Tone.now();
+            feedbackScreen.className = 'feedback-screen';
 
             if (userAnswer === result) {
                 feedbackScreen.classList.add('correct');
                 score++;
                 scoreSpan.textContent = score;
-                // Play a bell sound with reverb
                 correctSynth.triggerAttackRelease("C5", "8n");
             } else {
                 feedbackScreen.classList.add('incorrect');
-                feedbackDetails.textContent = `${result}`; // Only show the correct number
-                // Play a distinct descending tone
+                feedbackMessage.textContent = result;
                 incorrectSynth.triggerAttackRelease("C3", "16n", now);
                 incorrectSynth.triggerAttackRelease("A2", "16n", now + 0.1);
             }
             
-            questionIndex++;
-
-            setTimeout(showNextQuestion, 2000);
+            setTimeout(showNextQuestion, 2000); 
         }
         
         /**
-         * Starts a set.
+         * Starts or restarts a set.
          */
         function startSet() {
             questionIndex = 0;
             score = 0;
             scoreSpan.textContent = score;
+
+            // Select problems for the current set.
+            // If the main problem pool runs out, re-generate and shuffle.
+            if (allProblems.length < totalQuestionsPerSet) {
+                preGenerateAllProblems();
+            }
+            currentSetProblems = allProblems.splice(0, totalQuestionsPerSet);
             
             startScreen.style.display = 'none';
             feedbackScreen.style.display = 'none';
@@ -472,16 +486,17 @@
             gameContent.style.display = 'none';
             feedbackScreen.style.display = 'none';
             endScreen.style.display = 'flex';
+            
+            endMessage.textContent = `ชุดที่ ${currentSet} จบแล้ว!`;
+            endDetails.textContent = `คุณทำคะแนนได้ ${score} จาก ${currentSetProblems.length} คะแนน ในเวลา ${timeElapsed} วินาที!`;
+            
+            const nextSetExists = allProblems.length >= totalQuestionsPerSet;
+            nextSetBtn.style.display = nextSetExists ? 'block' : 'none';
             restartBtn.style.display = 'block';
 
-            if (currentSet < totalSets) {
-                endMessage.textContent = `ชุดที่ ${currentSet} จบแล้ว!`;
-                endDetails.textContent = `คุณทำคะแนนได้ ${score} จาก ${totalQuestionsPerSet} คะแนน ในเวลา ${timeElapsed} วินาที!`;
-                nextSetBtn.style.display = 'block';
-            } else {
-                endMessage.textContent = 'ยินดีด้วย! คุณทำครบทุกชุดแล้ว!';
-                endDetails.textContent = `คะแนนรวมทั้งหมดของคุณคือ ${score} จาก ${totalQuestionsPerSet * totalSets} คะแนน ในเวลา ${timeElapsed} วินาที!`;
-                nextSetBtn.style.display = 'none';
+            if (!nextSetExists) {
+                endMessage.textContent = 'ยินดีด้วย! คุณทำครบทุกโจทย์แล้ว!';
+                endDetails.textContent = `คะแนนรวมทั้งหมดของคุณคือ ${score} ในเวลา ${timeElapsed} วินาที!`;
             }
         }
 
@@ -496,34 +511,37 @@
 
         // --- Event Listeners ---
         startBtn.addEventListener('click', () => {
-            currentSet = parseInt(setSelectorStart.value, 10);
+            const selectedSet = parseInt(setSelectorStart.value, 10);
+            currentSet = selectedSet;
+            setSelectorInGame.value = currentSet;
+            preGenerateAllProblems();
             startSet();
         });
         
-        // 🚀 แก้ไข: เปลี่ยนคำสั่งของปุ่ม "กลับไปหน้าแรก" ให้กลับไปที่หน้า index
         restartBtn.addEventListener('click', () => {
-            window.location.href = '../index.html'; 
+            window.location.href = '../index.html';
         });
 
         nextSetBtn.addEventListener('click', () => {
             currentSet++;
+            setSelectorInGame.value = currentSet;
             startSet();
+        });
+
+        setSelectorInGame.addEventListener('change', (event) => {
+            const newSet = parseInt(event.target.value, 10);
+            if (newSet !== currentSet) {
+                currentSet = newSet;
+                preGenerateAllProblems(); // Re-generate and shuffle for a new start
+                startSet();
+            }
         });
 
         choiceBtns.forEach(btn => {
             btn.addEventListener('click', checkAnswer);
         });
-
-        // Initialize set selector options
-        for (let i = 1; i <= totalSets; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = `ชุดที่ ${i}`;
-            setSelectorStart.appendChild(option);
-        }
         
         window.onload = function() {
-            preGenerateProblems();
             Tone.start();
         };
     </script>
