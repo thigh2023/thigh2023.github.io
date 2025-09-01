@@ -499,10 +499,7 @@
         });
         
         restartBtn.addEventListener('click', () => {
-            currentSet = 1;
-            endScreen.style.display = 'none';
-            setSelectorStart.value = currentSet;
-            startScreen.style.display = 'flex';
+            window.location.href = '../index.html';
         });
 
         nextSetBtn.addEventListener('click', () => {
