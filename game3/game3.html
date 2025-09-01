@@ -142,7 +142,7 @@
             font-size: 1.1rem;
             font-weight: 700;
             border: none;
-            background-color: var(--info-color);
+            background-color: var(--primary-color);
             color: white;
             border-radius: 12px;
             cursor: pointer;
@@ -184,14 +184,14 @@
         #feedback-screen {
             display: none;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            gap: 1.5rem;
+            justify-content: center; /* Center content vertically */
+            gap: 0;
             width: 100%;
-            min-height: 200px;
+            text-align: center;
+            transition: background-color 0.5s ease-in-out;
+            min-height: 250px;
             border-radius: 15px;
-            font-weight: 700;
-            color: white;
         }
         
         #feedback-screen.correct {
@@ -201,12 +201,16 @@
         #feedback-screen.incorrect {
             background-color: var(--error-color);
         }
-        
-        /* New styles for just showing the number */
-        #feedback-screen.incorrect .feedback-message {
-            font-size: 5rem;
-        }
 
+        .feedback-message {
+            display: none;
+        }
+        
+        .feedback-details {
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: white;
+        }
 
         /* Mobile-first adjustments */
         @media (max-width: 480px) {
@@ -216,11 +220,14 @@
             h1 {
                 font-size: 2rem;
             }
-            .problem, .feedback-message {
+            .problem {
                 font-size: 3rem;
             }
             .choice-btn {
                 font-size: 2rem;
+            }
+            .feedback-details {
+                font-size: 3.5rem;
             }
         }
     </style>
@@ -499,7 +506,10 @@
         });
         
         restartBtn.addEventListener('click', () => {
-            window.location.href = '../index.html';
+            currentSet = 1;
+            endScreen.style.display = 'none';
+            setSelectorStart.value = currentSet;
+            startScreen.style.display = 'flex';
         });
 
         nextSetBtn.addEventListener('click', () => {
