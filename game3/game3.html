@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมการคูณ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tone.js for sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        :root {
+            --primary-color: #28a745; /* Green */
+            --secondary-color: #6c757d;
+            --light-bg: #f8f9fa;
+            --dark-text: #212529;
+            --success-color: #218838;
+            --error-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to right, #4CAF50, #81C784);
+            color: var(--dark-text);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .game-container {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .progress-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .problem {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            padding: 1.5rem;
+            background-color: var(--light-bg);
+            border-radius: 15px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
+        
+        .choice-btn {
+            padding: 1.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            border: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--primary-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s, color 0.2s;
+            width: 100%;
+        }
+
+        .choice-btn:disabled {
+            background-color: #e0e0e0;
+            color: #888;
+            cursor: not-allowed;
+            border-color: #bbb;
+        }
+
+        .choice-btn:hover:not(:disabled) {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .choice-btn.correct-answer {
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        
+        .choice-btn.incorrect-answer {
+            background-color: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        .info-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 1rem;
+            border-top: 2px dashed #ddd;
+            padding-top: 1rem;
+        }
+
+        .info-item {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .info-item .label {
+            color: var(--info-color);
+        }
+        
+        .game-btn {
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .game-btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            align-items: center;
+        }
+
+        .game-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        #set-selector-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #set-selector {
+            padding: 0.5rem 1rem;
+            font-size: 1.2rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            background-color: var(--light-bg);
+            cursor: pointer;
+            text-align: center;
+            width: 150px;
+        }
+        
+        #feedback-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center content vertically */
+            gap: 0;
+            width: 100%;
+            text-align: center;
+            transition: background-color 0.5s ease-in-out;
+            min-height: 250px;
+            border-radius: 15px;
+        }
+        
+        #feedback-screen.correct {
+            background-color: var(--success-color);
+        }
+        
+        #feedback-screen.incorrect {
+            background-color: var(--error-color);
+        }
+
+        .feedback-message {
+            display: none;
+        }
+        
+        .feedback-details {
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* Mobile-first adjustments */
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .problem {
+                font-size: 3rem;
+            }
+            .choice-btn {
+                font-size: 2rem;
+            }
+            .feedback-details {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen">
+            <h1>เกมการคูณ</h1>
+            <p>มาฝึกคูณเลขกันเถอะ!</p>
+            <div id="set-selector-container">
+                <label for="set-selector">เลือกชุดโจทย์:</label>
+                <select id="set-selector"></select>
+            </div>
+            <button id="startBtn" class="game-btn">เริ่มเล่น</button>
+        </div>
+        
+        <!-- Main Game Content (Question Screen) -->
+        <div id="game-content" style="display: none; flex-direction: column; align-items: center; gap: 1.5rem;">
+            <div id="game-controls">
+                <div class="progress-text" id="progressText"></div>
+            </div>
+            <div class="problem" id="problemText"></div>
+            <div class="choices-container" id="choicesContainer">
+                <button class="choice-btn" disabled>--</button>
+                <button class="choice-btn" disabled>--</button>
+                <button class="choice-btn" disabled>--</button>
+            </div>
+            <div class="info-container">
+                <div class="info-item">คะแนน: <span id="score">0</span></div>
+                <div class="info-item">เวลา: <span id="timer">0</span> วินาที</div>
+            </div>
+        </div>
+
+        <!-- Feedback Screen -->
+        <div id="feedback-screen">
+            <div class="feedback-message" id="feedbackMessage"></div>
+            <div class="feedback-details" id="feedbackDetails"></div>
+        </div>
+
+        <!-- End of Set Screen -->
+        <div id="end-screen" style="display: none;">
+            <div class="feedback-message" id="endMessage"></div>
+            <div class="feedback-details" id="endDetails"></div>
+            <div class="game-btn-container">
+                <button id="nextSetBtn" class="game-btn" style="display: none;">ไปยังชุดถัดไป</button>
+                <button id="restartBtn" class="game-btn" style="display: none;">กลับไปหน้าแรก</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const problemText = document.getElementById('problemText');
+        const progressText = document.getElementById('progressText');
+        const choicesContainer = document.getElementById('choicesContainer');
+        const choiceBtns = document.querySelectorAll('.choice-btn');
+        const startBtn = document.getElementById('startBtn');
+        const nextSetBtn = document.getElementById('nextSetBtn');
+        const scoreSpan = document.getElementById('score');
+        const timerSpan = document.getElementById('timer');
+        const setSelectorStart = document.getElementById('set-selector');
+        const startScreen = document.getElementById('start-screen');
+        const gameContent = document.getElementById('game-content');
+        const feedbackScreen = document.getElementById('feedback-screen');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const feedbackDetails = document.getElementById('feedbackDetails');
+        const endScreen = document.getElementById('end-screen');
+        const endMessage = document.getElementById('endMessage');
+        const endDetails = document.getElementById('endDetails');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // Game state variables
+        const totalQuestionsPerSet = 20;
+        const totalSets = 7;
+        let score = 0;
+        let currentSet = 1;
+        let questionIndex = 0;
+        let allProblems = [];
+        
+        // Timer variables
+        let timeElapsed = 0;
+        let timerInterval;
+
+        // Tone.js sound effects
+        // Use a MetalSynth for a bell sound and add reverb for richness
+        const reverb = new Tone.Reverb({
+            decay: 2,
+            preDelay: 0.01,
+            wet: 0.5
+        }).toDestination();
+        
+        const correctSynth = new Tone.MetalSynth({
+            frequency: 400,
+            envelope: {
+                attack: 0.001,
+                decay: 0.5,
+                sustain: 0.1,
+                release: 0.4
+            },
+            harmonicity: 5.1,
+            modulationIndex: 14,
+            resonance: 600,
+            octaves: 2
+        }).connect(reverb);
+        
+        // Use a simple Synth for a clear "incorrect" tone
+        const incorrectSynth = new Tone.Synth({
+            oscillator: { type: "square" },
+            envelope: { attack: 0.005, decay: 0.1, sustain: 0.1, release: 0.1 }
+        }).toDestination();
+        
+        /**
+         * Generates all unique multiplication problems for sets 1-7.
+         */
+        function preGenerateProblems() {
+            const possibleProblems = [];
+            const problemsSet = new Set();
+            for (let i = 2; i <= 12; i++) {
+                for (let j = 1; j <= 12; j++) {
+                    const problemKey = `${i}x${j}`;
+                    if (!problemsSet.has(problemKey)) {
+                        possibleProblems.push({ number1: i, number2: j, result: i * j });
+                        problemsSet.add(problemKey);
+                    }
+                }
+            }
+            
+            // Shuffle the entire list of problems
+            for (let i = possibleProblems.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [possibleProblems[i], possibleProblems[j]] = [possibleProblems[j], possibleProblems[i]];
+            }
+            
+            // Split into sets
+            allProblems = [];
+            for (let i = 0; i < totalSets; i++) {
+                allProblems.push(possibleProblems.slice(i * totalQuestionsPerSet, (i + 1) * totalQuestionsPerSet));
+            }
+        }
+
+        /**
+         * Loads and displays the next question from the current set.
+         */
+        function loadNextQuestion() {
+            if (questionIndex >= totalQuestionsPerSet) {
+                endSet();
+                return;
+            }
+            choiceBtns.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct-answer', 'incorrect-answer');
+            });
+
+            const currentProblem = allProblems[currentSet - 1][questionIndex];
+            const { number1, number2, result } = currentProblem;
+            
+            problemText.textContent = `${number1} x ${number2}`;
+            
+            const correctAnswer = result;
+
+            const choices = new Set();
+            choices.add(correctAnswer);
+            while (choices.size < 3) {
+                let incorrectAnswer = Math.floor(Math.random() * 145) + 1;
+                // Ensure incorrect answers are not too close to the correct one
+                if (Math.abs(incorrectAnswer - correctAnswer) > 5 && !choices.has(incorrectAnswer)) {
+                    choices.add(incorrectAnswer);
+                }
+            }
+            const shuffledChoices = Array.from(choices).sort(() => Math.random() - 0.5);
+            choiceBtns.forEach((btn, index) => {
+                btn.textContent = shuffledChoices[index];
+            });
+            progressText.textContent = `ชุดที่ ${currentSet} | ข้อที่ ${questionIndex + 1} / ${totalQuestionsPerSet}`;
+        }
+
+        /**
+         * Checks the user's answer and shows the feedback screen.
+         * @param {Event} event The click event object.
+         */
+        function checkAnswer(event) {
+            const selectedBtn = event.target;
+            const userAnswer = parseInt(selectedBtn.textContent, 10);
+            const { result } = allProblems[currentSet - 1][questionIndex];
+
+            gameContent.style.display = 'none';
+            feedbackScreen.style.display = 'flex';
+            
+            // Clear all previous classes and content
+            feedbackScreen.classList.remove('correct', 'incorrect');
+            feedbackMessage.textContent = '';
+            feedbackDetails.textContent = '';
+
+            const now = Tone.now();
+
+            if (userAnswer === result) {
+                feedbackScreen.classList.add('correct');
+                score++;
+                scoreSpan.textContent = score;
+                // Play a bell sound with reverb
+                correctSynth.triggerAttackRelease("C5", "8n");
+            } else {
+                feedbackScreen.classList.add('incorrect');
+                feedbackDetails.textContent = `${result}`; // Only show the correct number
+                // Play a distinct descending tone
+                incorrectSynth.triggerAttackRelease("C3", "16n", now);
+                incorrectSynth.triggerAttackRelease("A2", "16n", now + 0.1);
+            }
+            
+            questionIndex++;
+
+            setTimeout(showNextQuestion, 2000);
+        }
+        
+        /**
+         * Starts a set.
+         */
+        function startSet() {
+            questionIndex = 0;
+            score = 0;
+            scoreSpan.textContent = score;
+            
+            startScreen.style.display = 'none';
+            feedbackScreen.style.display = 'none';
+            endScreen.style.display = 'none';
+            gameContent.style.display = 'flex';
+
+            timeElapsed = 0;
+            timerSpan.textContent = timeElapsed;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                timerSpan.textContent = timeElapsed;
+            }, 1000);
+
+            loadNextQuestion();
+        }
+
+        /**
+         * Ends the current set and shows a summary.
+         */
+        function endSet() {
+            clearInterval(timerInterval);
+            
+            gameContent.style.display = 'none';
+            feedbackScreen.style.display = 'none';
+            endScreen.style.display = 'flex';
+            restartBtn.style.display = 'block';
+
+            if (currentSet < totalSets) {
+                endMessage.textContent = `ชุดที่ ${currentSet} จบแล้ว!`;
+                endDetails.textContent = `คุณทำคะแนนได้ ${score} จาก ${totalQuestionsPerSet} คะแนน ในเวลา ${timeElapsed} วินาที!`;
+                nextSetBtn.style.display = 'block';
+            } else {
+                endMessage.textContent = 'ยินดีด้วย! คุณทำครบทุกชุดแล้ว!';
+                endDetails.textContent = `คะแนนรวมทั้งหมดของคุณคือ ${score} จาก ${totalQuestionsPerSet * totalSets} คะแนน ในเวลา ${timeElapsed} วินาที!`;
+                nextSetBtn.style.display = 'none';
+            }
+        }
+
+        /**
+         * Function to transition from feedback screen to the next question.
+         */
+        function showNextQuestion() {
+            feedbackScreen.style.display = 'none';
+            gameContent.style.display = 'flex';
+            loadNextQuestion();
+        }
+
+        // --- Event Listeners ---
+        startBtn.addEventListener('click', () => {
+            currentSet = parseInt(setSelectorStart.value, 10);
+            startSet();
+        });
+        
+        restartBtn.addEventListener('click', () => {
+            window.location.href = "../index.html";
+        });
+
+        nextSetBtn.addEventListener('click', () => {
+            currentSet++;
+            startSet();
+        });
+
+        choiceBtns.forEach(btn => {
+            btn.addEventListener('click', checkAnswer);
+        });
+
+        // Initialize set selector options
+        for (let i = 1; i <= totalSets; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `ชุดที่ ${i}`;
+            setSelectorStart.appendChild(option);
+        }
+        
+        window.onload = function() {
+            preGenerateProblems();
+            Tone.start();
+        };
+    </script>
+</body>
+</html>
