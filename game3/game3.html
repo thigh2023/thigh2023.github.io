@@ -481,11 +481,13 @@
 
             if (currentSet < totalSets) {
                 endMessage.textContent = `ชุดที่ ${currentSet} จบแล้ว!`;
-                endDetails.textContent = `คุณทำคะแนนได้ ${score} จาก ${totalQuestionsPerSet} คะแนน ในเวลา ${timeElapsed} วินาที!`;
+                endDetails.textContent = `คุณทำคะแนนได้ ${score} จาก ${totalQuestions} คะแนน ในเวลา ${timeElapsed} วินาที!`;
+                restartBtn.style.display = 'block';
                 nextSetBtn.style.display = 'block';
             } else {
                 endMessage.textContent = 'ยินดีด้วย! คุณทำครบทุกชุดแล้ว!';
-                endDetails.textContent = `คะแนนรวมทั้งหมดของคุณคือ ${score} จาก ${totalQuestionsPerSet * totalSets} คะแนน ในเวลา ${timeElapsed} วินาที!`;
+                endDetails.textContent = `คะแนนรวมทั้งหมดของคุณคือ ${score} จาก ${totalQuestions * totalSets} คะแนน ในเวลา ${timeElapsed} วินาที!`;
+                restartBtn.style.display = 'block';
                 nextSetBtn.style.display = 'none';
             }
         }
