@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าหลักเกมเพื่อการเรียนรู้</title>
+    <style>
+        @font-face {
+            font-family: 'TH Sarabun New';
+            src: url('https://fonts.gstatic.com/s/thsarabunnew/v22/x3_xcrh9vK-eNqj8jS7PqgG7I2Y7A.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'TH Sarabun New', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 400px; /* Adjust max-width for vertical layout */
+            width: 100%;
+        }
+
+        h1 {
+            color: #007bff;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .game-buttons {
+            display: flex;
+            flex-direction: column; /* Set buttons to be in a vertical column */
+            gap: 20px;
+            width: 100%;
+        }
+
+        .game-button {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            font-size: 1.8rem; /* Adjusted font size for larger text */
+            font-family: 'TH Sarabun New', sans-serif;
+            font-weight: bold;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Colors for different buttons */
+        .game-button.game1 { background-color: #E91E63; } /* โทนสีชมพูเข้ม */
+        .game-button.game2 { background-color: #FF9800; } /* โทนสีส้ม */
+        .game-button.game3 { background-color: #4CAF50; } /* โทนสีเขียว */
+        .game-button.game4 { background-color: #0D47A1; } /* โทนสีฟ้าเข้ม */
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .game-button {
+                font-size: 1.5rem; /* Adjusted font size for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>เกมเพื่อการเรียนรู้ห้อง ASA</h1>
+        <div class="game-buttons">
+            <a href="game1/game1.html" class="game-button game1">1. เกมการบวก</a>
+            <a href="game2/game2.html" class="game-button game2">2. เกมการลบ</a>
+            <a href="game3/game3.html" class="game-button game3">3. เกมการคูณ</a>
+            <a href="game4/game4.html" class="game-button game4">4. เกมการหาร</a>
+        </div>
+    </div>
+
+</body>
+</html>
