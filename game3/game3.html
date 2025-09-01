@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Tone.js for sound effects -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         :root {
@@ -235,7 +234,6 @@
 <body>
 
     <div class="game-container">
-        <!-- Start Screen -->
         <div id="start-screen">
             <h1>เกมการคูณ</h1>
             <p>มาฝึกคูณเลขกันเถอะ!</p>
@@ -246,7 +244,6 @@
             <button id="startBtn" class="game-btn">เริ่มเล่น</button>
         </div>
         
-        <!-- Main Game Content (Question Screen) -->
         <div id="game-content" style="display: none; flex-direction: column; align-items: center; gap: 1.5rem;">
             <div id="game-controls">
                 <div class="progress-text" id="progressText"></div>
@@ -263,13 +260,11 @@
             </div>
         </div>
 
-        <!-- Feedback Screen -->
         <div id="feedback-screen">
             <div class="feedback-message" id="feedbackMessage"></div>
             <div class="feedback-details" id="feedbackDetails"></div>
         </div>
 
-        <!-- End of Set Screen -->
         <div id="end-screen" style="display: none;">
             <div class="feedback-message" id="endMessage"></div>
             <div class="feedback-details" id="endDetails"></div>
@@ -505,11 +500,9 @@
             startSet();
         });
         
+        // 🚀 แก้ไข: เปลี่ยนคำสั่งของปุ่ม "กลับไปหน้าแรก" ให้กลับไปที่หน้า index
         restartBtn.addEventListener('click', () => {
-            currentSet = 1;
-            endScreen.style.display = 'none';
-            setSelectorStart.value = currentSet;
-            startScreen.style.display = 'flex';
+            window.location.href = '../index.html'; 
         });
 
         nextSetBtn.addEventListener('click', () => {
